@@ -492,7 +492,7 @@ extern int8_t sn_grs_process_coap(struct nsdl_s *nsdl_handle, sn_coap_hdr_s *coa
     if (coap_packet_ptr->msg_type != COAP_MSG_TYPE_RESET && coap_packet_ptr->msg_type != COAP_MSG_TYPE_ACKNOWLEDGEMENT) {
 
         /* Allocate resopnse message  */
-        response_message_hdr_ptr = handle->sn_grs_alloc(sizeof(sn_coap_hdr_s));
+        response_message_hdr_ptr = sn_coap_parser_alloc_message(handle->coap);
         if (!response_message_hdr_ptr) {
             if (coap_packet_ptr->coap_status == COAP_STATUS_PARSER_BLOCKWISE_MSG_RECEIVED && coap_packet_ptr->payload_ptr) {
                 handle->sn_grs_free(coap_packet_ptr->payload_ptr);
@@ -501,7 +501,6 @@ extern int8_t sn_grs_process_coap(struct nsdl_s *nsdl_handle, sn_coap_hdr_s *coa
             sn_coap_parser_release_allocated_coap_msg_mem(handle->coap, coap_packet_ptr);
             return SN_NSDL_FAILURE;
         }
-        memset(response_message_hdr_ptr, 0, sizeof(sn_coap_hdr_s));
 
         /* If status has not been defined, response internal server error */
         if (status == COAP_MSG_CODE_EMPTY) {
@@ -644,7 +643,7 @@ static int8_t sn_grs_core_request(struct nsdl_s *handle, sn_nsdl_addr_s *src_add
     sn_coap_content_format_e wellknown_content_format = COAP_CT_LINK_FORMAT;
 
     /* Allocate response message  */
-    response_message_hdr_ptr = handle->grs->sn_grs_alloc(sizeof(sn_coap_hdr_s));
+    response_message_hdr_ptr = sn_coap_parser_alloc_message(handle->grs->coap);
     if (response_message_hdr_ptr == NULL) {
         if (coap_packet_ptr->coap_status == COAP_STATUS_PARSER_BLOCKWISE_MSG_RECEIVED && coap_packet_ptr->payload_ptr) {
             handle->grs->sn_grs_free(coap_packet_ptr->payload_ptr);
@@ -653,7 +652,6 @@ static int8_t sn_grs_core_request(struct nsdl_s *handle, sn_nsdl_addr_s *src_add
         sn_coap_parser_release_allocated_coap_msg_mem(handle->grs->coap, coap_packet_ptr);
         return SN_NSDL_FAILURE;
     }
-    memset(response_message_hdr_ptr, 0, sizeof(sn_coap_hdr_s));
 
     /* Build response */
     response_message_hdr_ptr->msg_code = COAP_MSG_CODE_RESPONSE_CONTENT;

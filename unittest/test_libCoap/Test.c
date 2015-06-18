@@ -100,13 +100,12 @@ void test_libcoap_init(void)
  */
 void test_libcoap_builder_no_options(void)
 {
-    memset(&coap_header, 0, sizeof(sn_coap_hdr_s));
+    sn_coap_parser_init_message(&coap_header);
     coap_header.msg_type = COAP_MSG_TYPE_ACKNOWLEDGEMENT;
     coap_header.msg_code = COAP_MSG_CODE_RESPONSE_CHANGED;
     coap_header.msg_id = 0x1234;
 
-    coap_header.options_list_ptr = malloc(sizeof(sn_coap_options_list_s));
-    memset(coap_header.options_list_ptr, 0, sizeof(sn_coap_options_list_s));
+    sn_coap_parser_alloc_options(handle, &coap_header);
 
     message_len = sn_coap_builder_calc_needed_packet_data_size(&coap_header);
     message_ptr = malloc(message_len);
@@ -127,7 +126,7 @@ void test_libcoap_builder_no_options(void)
  */
 void test_libcoap_builder_token_and_payload(void)
 {
-    memset(&coap_header, 0, sizeof(sn_coap_hdr_s));
+    sn_coap_parser_init_message(&coap_header);
     coap_header.msg_type = COAP_MSG_TYPE_ACKNOWLEDGEMENT;
     coap_header.msg_code = COAP_MSG_CODE_RESPONSE_CHANGED;
     coap_header.msg_id = 0x1234;
@@ -136,8 +135,7 @@ void test_libcoap_builder_token_and_payload(void)
     coap_header.payload_len = sizeof(option_short);
     coap_header.payload_ptr = option_short;
 
-    coap_header.options_list_ptr = malloc(sizeof(sn_coap_options_list_s));
-    memset(coap_header.options_list_ptr, 0, sizeof(sn_coap_options_list_s));
+    sn_coap_parser_alloc_options(handle, &coap_header);
 
     message_len = sn_coap_builder_calc_needed_packet_data_size(&coap_header);
     message_ptr = malloc(message_len);

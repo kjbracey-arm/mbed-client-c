@@ -260,6 +260,43 @@ typedef struct sn_coap_hdr_ {
 extern sn_coap_hdr_s *sn_coap_parser(struct coap_s *handle, uint16_t packet_data_len, uint8_t *packet_data_ptr, coap_version_e *coap_version_ptr);
 
 /**
+ * \brief Initialise a message structure to empty
+ *
+ * \param *coap_msg_ptr is pointer to CoAP message to initialise
+ *
+ * \return Return value is pointer passed in
+ */
+extern sn_coap_hdr_s *sn_coap_parser_init_message(sn_coap_hdr_s *handle);
+
+/**
+ * \brief Allocate an empty message structure
+ *
+ * \param *handle Pointer to CoAP library handle
+ *
+ * \return Return value is pointer to an empty CoAP message.\n
+ *         In following failure cases NULL is returned:\n
+ *          -Failure in given pointer (= NULL)\n
+ *          -Failure in memory allocation (malloc() returns NULL)
+ */
+extern sn_coap_hdr_s *sn_coap_parser_alloc_message(struct coap_s *handle);
+
+/**
+ * \brief Allocate an empty options structure
+ *
+ * \param *handle Pointer to CoAP library handle
+ * \param *coap_msg_ptr is pointer to CoAP message that will contain the options
+ *
+ * If the message already has a pointer to an option structure, that pointer
+ * is returned, rather than a new structure being allocated.
+ *
+ * \return Return value is pointer to the CoAP options structure.\n
+ *         In following failure cases NULL is returned:\n
+ *          -Failure in given pointer (= NULL)\n
+ *          -Failure in memory allocation (malloc() returns NULL)
+ */
+extern sn_coap_options_list_s *sn_coap_parser_alloc_options(struct coap_s *handle, sn_coap_hdr_s *coap_msg_ptr);
+
+/**
  * \fn void sn_coap_parser_release_allocated_coap_msg_mem(struct coap_s *handle, sn_coap_hdr_s *freed_coap_msg_ptr)
  *
  * \brief Releases memory of given CoAP message

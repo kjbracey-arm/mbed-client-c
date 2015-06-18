@@ -207,26 +207,21 @@ uint16_t sn_nsdl_register_endpoint(struct nsdl_s *handle, sn_nsdl_ep_parameters_
     /*** Build endpoint register message ***/
 
     /* Allocate memory for header struct */
-    register_message_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_hdr_s));
+    register_message_ptr = sn_coap_parser_alloc_message(handle->grs->coap);
     if (register_message_ptr == NULL) {
         return 0;
     }
-
-    memset(register_message_ptr, 0, sizeof(sn_coap_hdr_s));
 
     /* Fill message fields -> confirmable post to specified NSP path */
     register_message_ptr->msg_type = COAP_MSG_TYPE_CONFIRMABLE;
     register_message_ptr->msg_code = COAP_MSG_CODE_REQUEST_POST;
 
     /* Allocate memory for the extended options list */
-    register_message_ptr->options_list_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_options_list_s));
-    if (register_message_ptr->options_list_ptr == NULL) {
-        handle->sn_nsdl_free(register_message_ptr);
+    if (sn_coap_parser_alloc_options(handle->grs->coap, register_message_ptr) == NULL) {
+        sn_coap_parser_release_allocated_coap_msg_mem(handle->grs->coap, register_message_ptr);
         register_message_ptr = 0;
         return 0;
     }
-
-    memset(register_message_ptr->options_list_ptr, 0, sizeof(sn_coap_options_list_s));
 
     register_message_ptr->uri_path_len = sizeof(resource_path_ptr);
     register_message_ptr->uri_path_ptr = resource_path_ptr;
@@ -358,12 +353,10 @@ uint16_t sn_nsdl_update_registration(struct nsdl_s *handle, uint8_t *lt_ptr, uin
     /*** Build endpoint register update message ***/
 
     /* Allocate memory for header struct */
-    register_message_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_hdr_s));
+    register_message_ptr = sn_coap_parser_alloc_message(handle->grs->coap);
     if (register_message_ptr == NULL) {
         return 0;
     }
-
-    memset(register_message_ptr, 0, sizeof(sn_coap_hdr_s));
 
     /* Fill message fields -> confirmable post to specified NSP path */
     register_message_ptr->msg_type  =   COAP_MSG_TYPE_CONFIRMABLE;
@@ -394,13 +387,10 @@ uint16_t sn_nsdl_update_registration(struct nsdl_s *handle, uint8_t *lt_ptr, uin
 
 
     /* Allocate memory for the extended options list */
-    register_message_ptr->options_list_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_options_list_s));
-    if (register_message_ptr->options_list_ptr == NULL) {
+    if (sn_coap_parser_alloc_options(handle->grs->coap, register_message_ptr) == NULL) {
         sn_coap_parser_release_allocated_coap_msg_mem(handle->grs->coap, register_message_ptr);
         return 0;
     }
-
-    memset(register_message_ptr->options_list_ptr, 0, sizeof(sn_coap_options_list_s));
 
     /* Fill Uri-query options */
     sn_nsdl_fill_uri_query_options(handle, &temp_parameters, register_message_ptr, SN_NSDL_EP_UPDATE_MESSAGE);
@@ -465,20 +455,15 @@ uint16_t sn_nsdl_send_observation_notification(struct nsdl_s *handle, uint8_t *t
     }
 
     /* Allocate and initialize memory for header struct */
-    notification_message_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_hdr_s));
+    notification_message_ptr = sn_coap_parser_alloc_message(handle->grs->coap);
     if (notification_message_ptr == NULL) {
         return 0;
     }
 
-    memset(notification_message_ptr, 0, sizeof(sn_coap_hdr_s));
-
-    notification_message_ptr->options_list_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_options_list_s));
-    if (notification_message_ptr->options_list_ptr  == NULL) {
+    if (sn_coap_parser_alloc_options(handle->grs->coap, notification_message_ptr) == NULL) {
         handle->sn_nsdl_free(notification_message_ptr);
         return 0;
     }
-
-    memset(notification_message_ptr->options_list_ptr , 0, sizeof(sn_coap_options_list_s));
 
     /* Fill header */
     notification_message_ptr->msg_type = message_type;
@@ -545,15 +530,12 @@ uint16_t sn_nsdl_oma_bootstrap(struct nsdl_s *handle, sn_nsdl_addr_s *bootstrap_
 
     handle->sn_nsdl_oma_bs_done_cb = bootstrap_endpoint_info_ptr->oma_bs_status_cb;
 
-    /* Init CoAP header struct */
-    memset(&bootstrap_coap_header, 0, sizeof(sn_coap_hdr_s));
+    /* XXX FIX -- Init CoAP header struct */
+    sn_coap_parser_init_message(&bootstrap_coap_header);
 
-    bootstrap_coap_header.options_list_ptr = handle->sn_nsdl_alloc(sizeof(sn_coap_options_list_s));
-    if (!bootstrap_coap_header.options_list_ptr) {
+    if (!sn_coap_parser_alloc_options(handle->grs->coap, &bootstrap_coap_header)) {
         return 0;
     }
-
-    memset(bootstrap_coap_header.options_list_ptr, 0, sizeof(sn_coap_options_list_s));
 
     /* Build bootstrap start message */
     bootstrap_coap_header.msg_code = COAP_MSG_CODE_REQUEST_POST;
