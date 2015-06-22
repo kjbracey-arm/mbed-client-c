@@ -166,7 +166,7 @@ typedef struct sn_nsdl_resource_parameters_ {
     uint8_t     *interface_description_ptr;
     uint16_t    interface_description_len;
 
-    uint8_t     coap_content_type;
+    uint16_t    coap_content_type;
 
     uint8_t     mime_content_type;
 
@@ -309,7 +309,7 @@ extern void sn_nsdl_nsp_lost(struct nsdl_s *handle);
  * \fn extern uint16_t sn_nsdl_send_observation_notification(struct nsdl_s *handle, uint8_t *token_ptr, uint8_t token_len,
  *                                                  uint8_t *payload_ptr, uint16_t payload_len,
  *                                                  uint8_t *observe_ptr, uint8_t observe_len,
- *                                                  sn_coap_msg_type_e message_type, uint8_t content_type)
+ *                                                  sn_coap_msg_type_e message_type, sn_coap_content_format_e content_format)
  *
  *
  * \brief Sends observation message to mbed Device Server
@@ -322,7 +322,7 @@ extern void sn_nsdl_nsp_lost(struct nsdl_s *handle);
  * \param   *observe_ptr    Pointer to observe number to be sent
  * \param   observe_len     Observe number len
  * \param   message_type    Observation message type (confirmable or non-confirmable)
- * \param   contetnt_type   Observation message payload contetnt type
+ * \param   content_format  Observation message payload content format
  *
  * \return  !0  Success, observation messages message ID
  * \return  0   Failure
@@ -330,7 +330,7 @@ extern void sn_nsdl_nsp_lost(struct nsdl_s *handle);
 extern uint16_t sn_nsdl_send_observation_notification(struct nsdl_s *handle, uint8_t *token_ptr, uint8_t token_len,
         uint8_t *payload_ptr, uint16_t payload_len,
         uint8_t *observe_ptr, uint8_t observe_len,
-        sn_coap_msg_type_e message_type, uint8_t content_type);
+        sn_coap_msg_type_e message_type, sn_coap_content_format_e content_format);
 
 /**
  * \fn extern uint32_t sn_nsdl_get_version(void)
