@@ -56,34 +56,44 @@ typedef enum sn_coap_msg_type_ {
  * \brief Enumeration for CoAP Message code, used in CoAP Header
  */
 typedef enum sn_coap_msg_code_ {
-    COAP_MSG_CODE_EMPTY                                 = 0,
-    COAP_MSG_CODE_REQUEST_GET                           = 1,
-    COAP_MSG_CODE_REQUEST_POST                          = 2,
-    COAP_MSG_CODE_REQUEST_PUT                           = 3,
-    COAP_MSG_CODE_REQUEST_DELETE                        = 4,
+    COAP_MSG_CODE_EMPTY                                 = 0,   // 0.00
 
-    COAP_MSG_CODE_RESPONSE_CREATED                      = 65,
-    COAP_MSG_CODE_RESPONSE_DELETED                      = 66,
-    COAP_MSG_CODE_RESPONSE_VALID                        = 67,
-    COAP_MSG_CODE_RESPONSE_CHANGED                      = 68,
-    COAP_MSG_CODE_RESPONSE_CONTENT                      = 69,
-    COAP_MSG_CODE_RESPONSE_BAD_REQUEST                  = 128,
-    COAP_MSG_CODE_RESPONSE_UNAUTHORIZED                 = 129,
-    COAP_MSG_CODE_RESPONSE_BAD_OPTION                   = 130,
-    COAP_MSG_CODE_RESPONSE_FORBIDDEN                    = 131,
-    COAP_MSG_CODE_RESPONSE_NOT_FOUND                    = 132,
-    COAP_MSG_CODE_RESPONSE_METHOD_NOT_ALLOWED           = 133,
-    COAP_MSG_CODE_RESPONSE_NOT_ACCEPTABLE               = 134,
-    COAP_MSG_CODE_RESPONSE_REQUEST_ENTITY_INCOMPLETE    = 136,
-    COAP_MSG_CODE_RESPONSE_PRECONDITION_FAILED          = 140,
-    COAP_MSG_CODE_RESPONSE_REQUEST_ENTITY_TOO_LARGE     = 141,
-    COAP_MSG_CODE_RESPONSE_UNSUPPORTED_CONTENT_FORMAT   = 143,
-    COAP_MSG_CODE_RESPONSE_INTERNAL_SERVER_ERROR        = 160,
-    COAP_MSG_CODE_RESPONSE_NOT_IMPLEMENTED              = 161,
-    COAP_MSG_CODE_RESPONSE_BAD_GATEWAY                  = 162,
-    COAP_MSG_CODE_RESPONSE_SERVICE_UNAVAILABLE          = 163,
-    COAP_MSG_CODE_RESPONSE_GATEWAY_TIMEOUT              = 164,
-    COAP_MSG_CODE_RESPONSE_PROXYING_NOT_SUPPORTED       = 165
+    COAP_MSG_CODE_REQUEST__MIN                          = 1,   // 0.01
+    COAP_MSG_CODE_REQUEST_GET                           = 1,   // 0.01
+    COAP_MSG_CODE_REQUEST_POST                          = 2,   // 0.02
+    COAP_MSG_CODE_REQUEST_PUT                           = 3,   // 0.03
+    COAP_MSG_CODE_REQUEST_DELETE                        = 4,   // 0.04
+    COAP_MSG_CODE_REQUEST__MAX                          = 31,  // 0.31
+
+    // 1.00-1.31 Reserved
+
+    COAP_MSG_CODE_RESPONSE__MIN                         = 64,  // 2.00
+    COAP_MSG_CODE_RESPONSE_CREATED                      = 65,  // 2.01
+    COAP_MSG_CODE_RESPONSE_DELETED                      = 66,  // 2.02
+    COAP_MSG_CODE_RESPONSE_VALID                        = 67,  // 2.03
+    COAP_MSG_CODE_RESPONSE_CHANGED                      = 68,  // 2.04
+    COAP_MSG_CODE_RESPONSE_CONTENT                      = 69,  // 2.05
+    COAP_MSG_CODE_RESPONSE_CONTINUE                     = 127, // 2.31
+    COAP_MSG_CODE_RESPONSE_BAD_REQUEST                  = 128, // 4.00
+    COAP_MSG_CODE_RESPONSE_UNAUTHORIZED                 = 129, // 4.01
+    COAP_MSG_CODE_RESPONSE_BAD_OPTION                   = 130, // 4.02
+    COAP_MSG_CODE_RESPONSE_FORBIDDEN                    = 131, // 4.03
+    COAP_MSG_CODE_RESPONSE_NOT_FOUND                    = 132, // 4.04
+    COAP_MSG_CODE_RESPONSE_METHOD_NOT_ALLOWED           = 133, // 4.05
+    COAP_MSG_CODE_RESPONSE_NOT_ACCEPTABLE               = 134, // 4.06
+    COAP_MSG_CODE_RESPONSE_REQUEST_ENTITY_INCOMPLETE    = 136, // 4.08
+    COAP_MSG_CODE_RESPONSE_PRECONDITION_FAILED          = 140, // 4.12
+    COAP_MSG_CODE_RESPONSE_REQUEST_ENTITY_TOO_LARGE     = 141, // 4.13
+    COAP_MSG_CODE_RESPONSE_UNSUPPORTED_CONTENT_FORMAT   = 143, // 4.15
+    COAP_MSG_CODE_RESPONSE_INTERNAL_SERVER_ERROR        = 160, // 5.00
+    COAP_MSG_CODE_RESPONSE_NOT_IMPLEMENTED              = 161, // 5.01
+    COAP_MSG_CODE_RESPONSE_BAD_GATEWAY                  = 162, // 5.02
+    COAP_MSG_CODE_RESPONSE_SERVICE_UNAVAILABLE          = 163, // 5.03
+    COAP_MSG_CODE_RESPONSE_GATEWAY_TIMEOUT              = 164, // 5.04
+    COAP_MSG_CODE_RESPONSE_PROXYING_NOT_SUPPORTED       = 165, // 5.05
+    COAP_MSG_CODE_RESPONSE__MAX                         = 191  // 5.31
+
+            // 6.00-7.31 Reserved
 } sn_coap_msg_code_e;
 
 /**
@@ -219,7 +229,7 @@ typedef struct sn_coap_hdr_ {
     uint16_t                uri_path_len;       /**< 0-255 bytes. Repeatable. */
     uint8_t                *uri_path_ptr;       /**< Must be set to NULL if not used. E.g: temp1/temp2 */
 
-    uint8_t                 token_len;          /**< 1-8 bytes. */
+    uint8_t                 token_len;          /**< 0-8 bytes. */
     uint8_t                *token_ptr;          /**< Must be set to NULL if not used */
 
     uint8_t                 content_type_len;   /**< 0-2 bytes. */
