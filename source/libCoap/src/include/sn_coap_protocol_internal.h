@@ -86,6 +86,7 @@ struct coap_s {
 /* * For Option handling * */
 
 #define COAP_OPTION_MAX_AGE_DEFAULT                 60 /**< Default value of Max-Age if option not present */
+#define COAP_OPTION_URI_PORT_NONE                   (-1) /**< Internal value to represent no Uri-Port option */
 
 /* * * * * * * * * * * * * * */
 /* * * * ENUMERATIONS  * * * */
