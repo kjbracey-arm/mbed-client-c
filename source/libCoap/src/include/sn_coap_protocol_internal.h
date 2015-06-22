@@ -83,6 +83,9 @@ struct coap_s {
 #define SN_COAP_BLOCKWISE_MAX_TIME_DATA_STORED      10 /**< Maximum time in seconds of data (messages and payload) to be stored for blockwising */
 #endif
 
+/* * For Option handling * */
+
+#define COAP_OPTION_MAX_AGE_DEFAULT                 60 /**< Default value of Max-Age if option not present */
 
 /* * * * * * * * * * * * * * */
 /* * * * ENUMERATIONS  * * * */
