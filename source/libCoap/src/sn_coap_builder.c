@@ -197,14 +197,13 @@ uint16_t sn_coap_builder_calc_needed_packet_data_size(sn_coap_hdr_s *src_coap_ms
 
         /* If options list pointer exists */
         if (src_coap_msg_ptr->options_list_ptr != NULL) {
-            /* ACCEPT - Repeatable option. Length of this option is 0-2 bytes */
-            if (src_coap_msg_ptr->options_list_ptr->accept_ptr != NULL) {
-                returned_byte_count++;
-                if (src_coap_msg_ptr->options_list_ptr->accept_len > 2) {
+            /* ACCEPT - An integer option, up to 2 bytes */
+            if (src_coap_msg_ptr->options_list_ptr->accept != COAP_CT_NONE) {
+                if ((uint32_t) src_coap_msg_ptr->options_list_ptr->accept > 0xffff) {
                     return 0;
                 }
 
-                returned_byte_count += src_coap_msg_ptr->options_list_ptr->accept_len;
+                returned_byte_count += sn_coap_builder_options_build_add_uint_option(NULL, src_coap_msg_ptr->options_list_ptr->accept, COAP_OPTION_ACCEPT);
             }
 
             /* MAX AGE - Length of this option is 0-4 bytes */
@@ -405,7 +404,7 @@ static uint8_t sn_coap_builder_options_calculate_jump_need(sn_coap_hdr_s *src_co
     if (src_coap_msg_ptr->options_list_ptr != NULL) {
         /* If option numbers greater than 12 is not used, then jumping is not needed */
         if (!src_coap_msg_ptr->options_list_ptr->uri_query_ptr       &&
-                !src_coap_msg_ptr->options_list_ptr->accept_ptr         &&
+                src_coap_msg_ptr->options_list_ptr->accept == COAP_CT_NONE &&
                 !src_coap_msg_ptr->options_list_ptr->location_query_ptr &&
                 !src_coap_msg_ptr->options_list_ptr->block2_ptr         &&
                 !src_coap_msg_ptr->options_list_ptr->block1_ptr         &&
@@ -454,7 +453,7 @@ static uint8_t sn_coap_builder_options_calculate_jump_need(sn_coap_hdr_s *src_co
             }
             previous_option_number = (COAP_OPTION_URI_QUERY);
         }
-        if (src_coap_msg_ptr->options_list_ptr->accept_ptr != NULL) {
+        if (src_coap_msg_ptr->options_list_ptr->accept != COAP_CT_NONE) {
             if ((COAP_OPTION_ACCEPT - previous_option_number) > 12) {
                 needed_space += 1;
             }
@@ -682,10 +681,12 @@ static int8_t sn_coap_builder_options_build(uint8_t **dst_packet_data_pptr, sn_c
         }
 
         /* * * * Build Accept option  * * * * */
-        ret_status = sn_coap_builder_options_build_add_multiple_option(dst_packet_data_pptr, &src_coap_msg_ptr->options_list_ptr->accept_ptr,
-                     (uint16_t *)&src_coap_msg_ptr->options_list_ptr->accept_len, COAP_OPTION_ACCEPT);
-        if (ret_status == -1) {
-            return -1;
+        if (src_coap_msg_ptr->options_list_ptr->accept != COAP_CT_NONE) {
+            ret_status = sn_coap_builder_options_build_add_uint_option(dst_packet_data_pptr, src_coap_msg_ptr->options_list_ptr->accept,
+                         COAP_OPTION_ACCEPT);
+            if (ret_status == -1) {
+                return -1;
+            }
         }
     }
 
