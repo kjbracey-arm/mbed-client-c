@@ -123,6 +123,10 @@ typedef enum sn_coap_option_numbers_ {
 //  136 =   (Reserved)
 } sn_coap_option_numbers_e;
 
+#define coap_option_is_critical(onum)   ((bool) ((onum) & 1))
+#define coap_option_is_unsafe(onum)     ((bool) ((onum) & 2))
+#define coap_option_is_nocachekey(onum) ((bool) (((onum) & 0x1e) == 0x1c)
+
 /**
  * \brief Enumeration for CoAP Content Format codes
  */

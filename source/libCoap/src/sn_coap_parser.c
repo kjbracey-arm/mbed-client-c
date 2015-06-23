@@ -526,7 +526,12 @@ static int8_t sn_coap_parser_options_parse(struct coap_s *handle, uint8_t **pack
                 break;
 
             default:
-                return -1;
+                if (coap_option_is_critical(option_number)) {
+                    return -1;
+                } else {
+                    (*packet_data_pptr)++;
+                    break;
+                }
         }
 
         /* Check for overflow */
