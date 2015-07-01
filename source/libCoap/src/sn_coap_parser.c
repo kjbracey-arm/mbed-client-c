@@ -132,6 +132,10 @@ sn_coap_hdr_s *sn_coap_parser(struct coap_s *handle, uint16_t packet_data_len, u
 
     /* * * * Options parsing, move pointer over the options... * * * */
     if (sn_coap_parser_options_parse(handle, &data_temp_ptr, parsed_and_returned_coap_msg_ptr, packet_data_ptr, packet_data_len) != 0) {
+        if (parsed_and_returned_coap_msg_ptr->coap_status == COAP_STATUS_PARSER_UNKNOWN_CRITICAL_OPTION) {
+            return parsed_and_returned_coap_msg_ptr;
+        }
+
         /* Release memory of CoAP message */
         sn_coap_parser_release_allocated_coap_msg_mem(handle, parsed_and_returned_coap_msg_ptr);
         return NULL;
@@ -527,6 +531,12 @@ static int8_t sn_coap_parser_options_parse(struct coap_s *handle, uint8_t **pack
 
             default:
                 if (coap_option_is_critical(option_number)) {
+                    if (sn_coap_parser_alloc_options(handle, dst_coap_msg_ptr) == NULL) {
+                        return -1;
+                    }
+
+                    dst_coap_msg_ptr->coap_status = COAP_STATUS_PARSER_UNKNOWN_CRITICAL_OPTION;
+                    dst_coap_msg_ptr->options_list_ptr->unknown_option = option_number;
                     return -1;
                 } else {
                     (*packet_data_pptr)++;

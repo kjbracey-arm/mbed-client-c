@@ -516,6 +516,18 @@ sn_coap_hdr_s *sn_coap_protocol_parse(struct coap_s *handle, sn_nsdl_addr_s *src
         }
     }
 
+    if (returned_dst_coap_msg_ptr->coap_status == COAP_STATUS_PARSER_UNKNOWN_CRITICAL_OPTION) {
+        if (returned_dst_coap_msg_ptr->msg_type == COAP_MSG_TYPE_CONFIRMABLE &&
+                returned_dst_coap_msg_ptr->msg_code >= COAP_MSG_CODE_REQUEST__MIN &&
+                returned_dst_coap_msg_ptr->msg_code <= COAP_MSG_CODE_REQUEST__MAX) {
+            /* Send "Bad Option" response */
+        } else if (returned_dst_coap_msg_ptr->msg_type == COAP_MSG_TYPE_CONFIRMABLE) {
+            /* Reject - send reset */
+        } else {
+            /* Reject - ignore */
+        }
+    }
+
 #if !SN_COAP_BLOCKWISE_MAX_PAYLOAD_SIZE /* If Message blockwising is used, this part of code will not be compiled */
     /* If blockwising used in received message */
     if (returned_dst_coap_msg_ptr->options_list_ptr != NULL &&
