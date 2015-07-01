@@ -53,6 +53,9 @@ static uint8_t coap_message_option_30[7]        = {0x60, 0x44, 0x12, 0x34, 0xdd,
 static uint8_t coap_message_option_300[8]       = {0x60, 0x44, 0x12, 0x34, 0xde, 0x16, 0x00, 0x1f};                     // option number 35, length 300
 static uint8_t coap_message_option_600[8]       = {0x60, 0x44, 0x12, 0x34, 0xde, 0x16, 0x01, 0x4b};                     // option number 35, length 600
 static uint8_t coap_message_option_800[8]       = {0x60, 0x44, 0x12, 0x34, 0xde, 0x16, 0x02, 0x13};                     // option number 35, length 800
+static uint8_t coap_message_option_unk_elec[9]  = {0x60, 0x44, 0x12, 0x34, 0xe3, 0xfc, 0xdb, 0x61, 0x62, 0x63};         // option number 65000
+static uint8_t coap_message_option_unk_crit[9]  = {0x60, 0x44, 0x12, 0x34, 0xe3, 0xfc, 0xdc, 0x61, 0x62, 0x63};         // option number 65001
+
 /* Options = Token - 3 bytes, max age - 14 - 3 bytes, Uri path - 11 - 2 x 2 bytes, Uri host - 3 - 3 bytes */
 static uint8_t coap_message_multiple_options[21] = {0x63, 0x44, 0x12, 0x34, 0x61, 0x62, 0x63, 0x33, 0x61, 0x62, 0x63, 0x82, 0x62, 0x63, 0x02, 0x61, 0x62, 0x33, 0x61, 0x62, 0x63};
 
@@ -416,6 +419,27 @@ void test_libcoap_parser_parse_message_with_multiple_options(void)
     sn_coap_parser_release_allocated_coap_msg_mem(handle, coap_header_ptr);
 }
 
+/**
+ * \fn test_libcoap_parser_parse_message_with_unknown_elective_option(void)
+ *
+ * \brief call coap protocol parser with message with an unknown elective option (ACK - changed - 65000)
+ *
+ */
+void test_libcoap_parser_parse_message_with_unknown_elective_option(void)
+{
+    coap_address.addr_ptr = address;
+
+    sn_coap_hdr_s *coap_header_ptr = sn_coap_protocol_parse(handle, &coap_address, sizeof(coap_message_option_unk_elec), coap_message_option_unk_elec, NULL);
+
+    TEST_ASSERT_NOT_NULL(coap_header_ptr);
+
+    TEST_ASSERT_EQUAL(COAP_MSG_TYPE_ACKNOWLEDGEMENT, coap_header_ptr->msg_type);
+    TEST_ASSERT_EQUAL(COAP_MSG_CODE_RESPONSE_CHANGED, coap_header_ptr->msg_code);
+    TEST_ASSERT_EQUAL(0x1234, coap_header_ptr->msg_id);
+
+    sn_coap_parser_release_allocated_coap_msg_mem(handle, coap_header_ptr);
+}
+
 /*******************************************************************************/
 /***                        NEGATIVE TEST CASES                              ***/
 /*******************************************************************************/
@@ -575,6 +599,20 @@ void test_libcoap_negative_parse_wrong_code_7(void)
     sn_coap_hdr_s *coap_header_ptr = sn_coap_protocol_parse(handle, &coap_address, sizeof(coap_message_wrong_code_7), coap_message_wrong_code_7, NULL);
     TEST_ASSERT_NULL(coap_header_ptr);
 
+}
+
+/**
+ * \fn test_libcoap_parser_parse_message_with_unknown_critical_option(void)
+ *
+ * \brief call coap protocol parser with message with an unknown critical option (ACK - changed - 65001)
+ *
+ */
+void test_libcoap_negative_parse_message_with_unknown_critical_option(void)
+{
+    coap_address.addr_ptr = address;
+
+    sn_coap_hdr_s *coap_header_ptr = sn_coap_protocol_parse(handle, &coap_address, sizeof(coap_message_option_unk_crit), coap_message_option_unk_crit, NULL);
+    TEST_ASSERT_NULL(coap_header_ptr);
 }
 
 
